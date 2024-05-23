@@ -1,0 +1,34 @@
+{
+  "name": "es6-logger",
+  "version": "1.0.0",
+  "description": "Simple ES6 JavaScript Logger",
+  "main": "index.js",
+  "type": "module",
+  "jest": {
+    "transform": {}
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TangoGibbons/ES6-Logger.git"
+  },
+  "keywords": [
+    "es6",
+    "javascript",
+    "node",
+    "nodejs",
+    "logger",
+    "simple"
+  ],
+  "author": "TangoGibbons",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TangoGibbons/ES6-Logger/issues"
+  },
+  "homepage": "https://github.com/TangoGibbons/ES6-Logger#readme",
+  "devDependencies": {
+    "jest": "29.7.0"
+  }
+}
