@@ -2,7 +2,7 @@
   "name": "es6-logger",
   "version": "1.0.0",
   "description": "Simple ES6 JavaScript Logger",
-  "main": "index.js",
+  "main": "logger.js",
   "type": "module",
   "jest": {
     "transform": {}

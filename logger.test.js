@@ -11,15 +11,15 @@
 */
 
 import fs from 'fs';
-import logLevel from './index.js';
-import * as logger from './index.js';
+import logLevel from './logger.js';
+import * as logger from './logger.js';
 
 
 // Test setting the logMode
 test('set the logMode', () => {
-    expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
-    expect(logger.setLogMode(logger.logMode.FILE)).toBe(logger.logMode.FILE);
-    expect(logger.setLogMode('UNSUPPORTED')).toBe(logger.logMode.CONSOLE);
+    expect(logger.setGlobalLogLevel(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
+    expect(logger.setGlobalLogLevel(logger.logMode.FILE)).toBe(logger.logMode.FILE);
+    expect(logger.setGlobalLogLevel('UNSUPPORTED')).toBe(logger.logMode.CONSOLE);
 });
 
 
@@ -37,7 +37,7 @@ test('set the logLevel', () => {
 
 // Test permutations of logLevel and log level
 test('should show on the console', () => {
-    logger.setLogMode(logger.logMode.CONSOLE);
+    logger.setGlobalLogLevel(logger.logMode.CONSOLE);
 
     // Test all logLevels on a logLevel setting of trace
     logger.setLogLevel(logLevel.TRACE);
@@ -97,7 +97,7 @@ test('should show on the console', () => {
 
 // Changing the global.__configuredLogLevel outside the logger module
 test('should show on the console', () => {
-    logger.setLogMode(logger.logMode.CONSOLE);
+    logger.setGlobalLogLevel(logger.logMode.CONSOLE);
 
     // Test all logLevels on a logLevel setting of trace
     logger.setLogLevel(logLevel.TRACE);
@@ -113,7 +113,7 @@ test('should show on the console', () => {
 
 // Changing the global.__logMode outside the logger module
 test('should show on the console with warning', () => {
-    logger.setLogMode(logger.logMode.FILE, 'test.txt');
+    logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt');
 
     logger.setLogLevel(logLevel.TRACE);
     global.__logMode = 'UNSUPPORTED';
@@ -127,7 +127,7 @@ test('writing to log file', () => {
     fd.close;
 
     logger.setLogLevel(logLevel.TRACE);
-    logger.setLogMode(logger.logMode.FILE, 'test.txt');
+    logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt');
     logger.logIt(logLevel.TRACE, 'test row 1');
     logger.logIt(logLevel.TRACE, 'test row 2');
     logger.logIt(logLevel.TRACE, 'test row 3');
@@ -147,7 +147,7 @@ test('change the global.__fileAndPath to a valid value', () => {
     fd2.close;
 
     logger.setLogLevel(logLevel.TRACE);
-    logger.setLogMode(logger.logMode.FILE, 'test.txt');
+    logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt');
 
     global.__fileAndPath = 'changeTestName.txt';
     logger.logIt(logLevel.TRACE, 'test row 1');
@@ -168,7 +168,7 @@ test('change the global.__fileAndPath to a valid value', () => {
 
 // Test errors generated if the global.__configuredLogLevel is changed external to the logger module
 test('external change to logLevel, should show on console with warning', () => {
-    expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
+    expect(logger.setGlobalLogLevel(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
     expect(logger.setLogLevel(logLevel.FATAL)).toBe(logLevel.FATAL);
 
     global.__configuredLogLevel = 10;
@@ -185,13 +185,13 @@ test('external change to logLevel, should show on console with warning', () => {
 
 // Test error generated if bad file name is used
 test('external change to logLevel, should show on console with warning', () => {
-    expect(logger.setLogMode(logger.logMode.FILE, '\\{}sdf**')).toBe(logger.logMode.FILE);
+    expect(logger.setGlobalLogLevel(logger.logMode.FILE, '\\{}sdf**')).toBe(logger.logMode.FILE);
 
     expect(()=>{
         logger.logIt(logLevel.FATAL, 'An error should be thrown because of a bad file name');
     }).toThrow();
 
-    expect(logger.setLogMode(logger.logMode.FILE, 'test.txt')).toBe(logger.logMode.FILE);
+    expect(logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt')).toBe(logger.logMode.FILE);
     global.__fileAndPath = '\\{}sdf**'
     expect(()=>{
         logger.logIt(logLevel.FATAL, 'An error should be thrown because the global.__fileAndPath value was changed to a bad file name');

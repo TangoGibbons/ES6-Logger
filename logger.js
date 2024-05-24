@@ -97,7 +97,7 @@ export function setLogMode(__changeLogMode, __changeFileWithPath = null) {
 // A function for setting the desired logLevel.  
 // The global.__configuredLogLevel value is changed so that the changed value is effective for all subsequent calls.
 // PUBLIC METHOD
-export function setLogLevel(__changeLogLevel) {
+export function setGlobalLogLevel(__changeLogLevel) {
     try {
         let logLevelSet;
         switch (__changeLogLevel) {
