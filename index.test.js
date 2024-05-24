@@ -3,7 +3,7 @@ import fs from 'fs';
 import logLevel from './index.js';
 import * as logger from './index.js';
 
-test('set the outputMode', () => {
+test('set the logMode', () => {
     expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
     expect(logger.setLogMode(logger.logMode.FILE)).toBe(logger.logMode.FILE);
 });
