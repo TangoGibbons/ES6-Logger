@@ -4,7 +4,7 @@
  * rights of use agreement set forth by the npm Open-Source Terms
  *
  * @author: tgibbons
- */
+*/
 
 /*
  * This is a self-contained module that relies on a two dependencies.
@@ -24,7 +24,7 @@
  * console log and file will append to a file on the hosting servers file system.
  * The log file name is supplied by the calling program.
  * 
- */
+*/
 
 // Required dependent libraries
 import fs from 'fs';
@@ -65,7 +65,7 @@ export const logMode = {
 
 // Setting up global values used to control the behavior of the logger.  
 global.__configuredLogLevel = global.__configuredLogLevel = 0; // default to trace;
-global.__logMode = logMode.CONSOLE; // detaul to console.
+global.__logMode = logMode.CONSOLE; // default to console.
 global.__fileAndPath = null; // If the default logMode is console, there is no need for a default log file.
 
 
@@ -81,12 +81,13 @@ export function setLogMode(__changeLogMode, __changeFileWithPath = null) {
             case logMode.FILE:
                 global.__logMode = logMode.FILE;
                 global.__fileAndPath = __changeFileWithPath;
+                break;
             default: // In case the wrong __logMode was passed into this function
                 global.__logMode = logMode.CONSOLE;
-                logIt(logLevel.WARN, 'The logMode is not set to etierh CONSOLE or FILE - defaulting to CONSOLE.');
+                logIt(logLevel.WARN, 'The logMode is not set to either CONSOLE or FILE - defaulting to CONSOLE.');
                 break;                
         }
-        return global.__logMode;
+        return global.__logMode; // Returning mainly for testing purposes
     } catch (err) {
         throw err;
     }
@@ -130,7 +131,7 @@ export function setLogLevel(__changeLogLevel) {
                 logIt(logLevel.WARN, 'Trying to set logLevel to invalid value - defaulting to TRACE.');
                 break;
         }
-        return logLevelSet;
+        return logLevelSet; // Returning mainly for testing purposes
     } catch (err) {
         throw err;
     }
@@ -142,35 +143,48 @@ export function setLogLevel(__changeLogLevel) {
 export function logIt(__logLevel, logMessage) {
     try {
         validateGlobalLogLevelValue();  // Validate the global.__configLogLevel wasn't changed outside of this module.
+        let logged;
         switch (__logLevel) {
             case logLevel.TRACE:
+                logged = false;
                 if (global.__configuredLogLevel <= 0) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? trace('Trace - ' + logMessage) : 'Trace - ' + logMessage);
+                    logged = true;
                 }
                 break;
             case logLevel.DEBUG:
+                logged = false;
                 if (global.__configuredLogLevel <= 1) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? debug('Debug - ' + logMessage) : 'Debug - ' + logMessage);
+                    logged = true;
                 }
                 break;
             case logLevel.INFO:
+                logged = false;
                 if (global.__configuredLogLevel <= 2) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? info('Info - ' + logMessage) : 'Info - ' + logMessage);
+                    logged = true;
                 }
                 break;
             case logLevel.WARN:
+                logged = false;
                 if (global.__configuredLogLevel <= 3) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? warn('Warn! ' + logMessage) : 'Warn! ' + logMessage);
+                    logged = true;
                 }
                 break;
             case logLevel.ERROR:
+                logged = false;
                 if (global.__configuredLogLevel <= 4) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? error('Error!! ' + logMessage) : 'Error!! ' + logMessage);
+                    logged = true;
                 }
                 break;
             case logLevel.FATAL:
+                logged = false;
                 if (global.__configuredLogLevel <= 5) {
                     logTheMessage(global.__logMode == logMode.CONSOLE ? fatal('Fatal!!! ' + logMessage) : 'Fatal!!! - ' + logMessage);
+                    logged = true;
                 }
                 break;
             default:
@@ -178,8 +192,10 @@ export function logIt(__logLevel, logMessage) {
                 logTheMessage(global.__logMode == logMode.CONSOLE ? trace('Trace - ' + logMessage) : 'Trace - ' + logMessage);
                 logMessage = 'Invalid logLevel was used when calling logIt. Defaulted to TRACE.'
                 logTheMessage(global.__logMode == logMode.CONSOLE ? warn('Warn - ' + logMessage) : 'Warn - ' + logMessage);
+                logged = true;
                 break;                
         }
+        return logged  // Returning mainly for testing purposes
     } catch (err) {
         throw err;
     }
@@ -218,7 +234,7 @@ function logTheMessage(__message) {
         default:
             // A default codepath if the global.__logMode value is not a supported value, 
             // meaning it was changed outside this module (the user is warned).
-            warningMessage == warn('Warn - global.__logMode was changed outside the logger module.  Defaulting output to console.');
+            let warningMessage = warn('Warn - global.__logMode was changed outside the logger module.  Defaulting output to console.');
             console.log(dateTime.substring(0,dateTime.lastIndexOf(':') + 3) + ' ' + warningMessage);
             console.log(dateTime.substring(0,dateTime.lastIndexOf(':') + 3) + ' ' + __message);
             break;  
