@@ -8,7 +8,7 @@
     "transform": {}
   },
   "scripts": {
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll"
   },
   "repository": {
     "type": "git",

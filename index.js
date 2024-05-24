@@ -50,26 +50,34 @@ export function setLogMode(__changeOutputMode, __changeFileWithPath = null) {
 export function setLogLevel(__changeLogLevel) {
     try {
         global.__configuredLogLevel = 0; // default to trace
+        let logLevelSet;
         switch (__changeLogLevel) {
             case logLevel.TRACE:
                 global.__configuredLogLevel = 0;
+                logLevelSet = logLevel.TRACE;
                 break;
             case logLevel.DEBUG:
                 global.__configuredLogLevel = 1;
+                logLevelSet = logLevel.DEBUG;
                 break;
             case logLevel.INFO:
                 global.__configuredLogLevel = 2;
+                logLevelSet = logLevel.INFO;
                 break;
             case logLevel.WARN:
                 global.__configuredLogLevel = 3;
+                logLevelSet = logLevel.WARN;
                 break;
             case logLevel.ERROR:
                 global.__configuredLogLevel = 4;
+                logLevelSet = logLevel.ERROR;
                 break;
             case logLevel.FATAL:
                 global.__configuredLogLevel = 5;
+                logLevelSet = logLevel.FATAL;
                 break;
         }
+        return logLevelSet;
     } catch (err) {
         throw err;
     }
