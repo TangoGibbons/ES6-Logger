@@ -131,3 +131,4 @@ dist
 
 # Apple Directory
 .DS_Store
+package-lock.json
