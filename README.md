@@ -65,7 +65,7 @@ For example, if the globalLogLevel is set to TRACE, then all log requests are ge
 2) Because the logLevel enum will be used quite often, this enum is the default export.  So, you can import the logLevel as following:
 
 ```
-import logLevel from 'logger';
+import logLevel from 'es6-logger';
 ```
 
 Then use it in your code as follows:
@@ -85,7 +85,7 @@ Of course, you can import the logLevel as you wish, as therefore refer to it in 
 3) The other enum and all methods are individually exported, requiring the following means of importing and using them:
 
 ```
-import * as logger from 'logger.js';
+import * as logger from 'es6-logger';
 
 logger.setLogLevel(logLevel.TRACE);
 logger.setLogMode(logger.logMode.CONSOLE);
@@ -100,8 +100,8 @@ logger.logIt(logLevel.DEBUG, 'log message');
 
 ## Examples
 ```
-import logLevel from './logger.js';
-import * as logger from './logger.js';
+import logLevel from 'es6-logger';
+import * as logger from 'es6-logger';
 
 logger.setLogLevel(logLevel.TRACE);
 logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');

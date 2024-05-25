@@ -11,8 +11,8 @@
 */
 
 import fs from 'fs';
-import logLevel from './logger.js';
-import * as logger from './logger.js';
+import logLevel from './tango-es6-logger.js';
+import * as logger from './tango-es6-logger.js';
 
 
 // Test setting the logMode

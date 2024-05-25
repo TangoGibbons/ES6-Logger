@@ -1,8 +1,8 @@
 {
-  "name": "es6-logger",
+  "name": "tango-es6-logger",
   "version": "1.0.0",
   "description": "Simple ES6 JavaScript Logger",
-  "main": "logger.js",
+  "main": "tango-es6-logger.js",
   "type": "module",
   "jest": {
     "transform": {}
@@ -14,21 +14,26 @@
     "type": "git",
     "url": "git+https://github.com/TangoGibbons/ES6-Logger.git"
   },
+  "bugs": {
+    "url": "https://github.com/TangoGibbons/ES6-Logger/issues"
+  },
   "keywords": [
     "es6",
     "javascript",
     "node",
     "nodejs",
     "logger",
-    "simple"
+    "simple",
+    "TangoGibbons",
+    "Tango"
   ],
   "author": "TangoGibbons",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/TangoGibbons/ES6-Logger/issues"
-  },
   "homepage": "https://github.com/TangoGibbons/ES6-Logger#readme",
   "devDependencies": {
     "jest": "29.7.0"
+  },
+  "dependencies": {
+    "chalk": "5.3.0"
   }
 }
