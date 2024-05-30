@@ -124,10 +124,10 @@ tango-es6-logger uses three global variables.  These variables are as follows:
 2) global.__logMode - Used to persist the logMode setting.
 3) global.__fileAndPath - Used to persist the file and path location of a log file, if the logMode is set to FILE.
 
-PLEASE REFRAIN FROM USING THESE VARILABLE NAMES.
+PLEASE REFRAIN FROM USING THESE VARIABLE NAMES.
 
-The value of these global variables is set when using the public logger methods It is important to note - your code should not use these variable names.  Doing so could cause unexpected behavior in the logger module.  Validity checking is implemented to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to accidently change the value of one of these global variables to a valid value, which could cause the logger to behave in an unexpected manner.
+The values of these global variables are set when using the logger's public methods as described above.  Your code should not use these variable names nor directly change the values of these variables; doing so could cause unexpected behavior in the logger module.  Validity checking is implemented on a usage-by-usage basis to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to inadvertently change the value of one of these global variables to a valid value, which could cause the logger to behave in an unexpected manner.
 
-Further, please note, consideration was taken when determining if the logger encountered an unexpected value in one of the global values.  The choice was to change the unexpected value to a default value or throw an error.  I ultimately decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware the global variable value has changed somewhere is your code.
+Further, please note, consideration was taken when determining how the logger should behave when encountering an unexpected value in one of the global values.  The choice is to change the unexpected value to a default value or throw an error.  Ultimately, it was decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware a global variable value has changed somewhere is your code.
 
 Again, please refrain from using these global variale names in your code.

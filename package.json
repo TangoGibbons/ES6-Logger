@@ -1,6 +1,6 @@
 {
   "name": "tango-es6-logger",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple ES6 JavaScript Logger",
   "main": "tango-es6-logger.js",
   "type": "module",
