@@ -2,6 +2,26 @@
 
 tango-es6-logger is a simple logger for NodeJS projects.  tango-es6-logger is built using the es6 specification, meaning it uses the es6 modules specification for importing into NodeJS modules.
 
+
+## Examples
+```
+import logLevel from 'tango-es6-logger';
+import * as logger from 'tango-es6-logger';
+
+logger.setLogLevel(logLevel.TRACE);
+logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
+logIt(logLevel.WARN, 'This message will appear in the myLogFile.txt file.');
+
+logger.setLogLevel(logLevel.ERROR);
+logger.setLogMode(logger.logMode.CONSOLE);
+logIt(logLevel.TRACE, 'This message will not appear because the messageLogLevel is less than the globalLogLevel.');
+
+logger.setLogLevel(logLevel.DEBUG);
+logger.setLogMode(logger.logMode.CONSOLE);
+logIt(logLevel.DEBUG, 'This message will display in the console because the messageLogLevel is greater than or equal to the globalLogLevel');
+```
+
+
 ## tango-es6-logger Features
 1) Set the globalLogLevel to determine what log messages are generated.  Supported logging levels are:
 
@@ -14,11 +34,11 @@ A log message will be generated if the globalLogLevel is greater than or equal t
 3) Specify for each log request the log level, or messageLogLevel, for that request.  The log message will be generated as long as the messageLogLevel for a given request is greater than or equal to the globalLogLevel you set, as mentioned in bullet 1 above.
 
 
-
 ## Install
 ```shell
 npm install tango-es6-logger
 ```
+
 
 ## Usage
 tango-es6-logger has three (3) exported functions and two (2) exported enums.  These functions and enums represent the public facing interface to the tango-es6-logger and have been designed to be very simple to use.  
@@ -50,7 +70,7 @@ Other logger solutions use the term "filter" when referring to the realtionship 
 
 3) logIt(messageLogLevel, logMessage)
 
-- messageLogLevel is of tpe logLevel (the enum mentioned above)
+- messageLogLevel is of type logLevel (the enum mentioned above)
 - logMessage is of type string
 
 This method is used to request a log message be generated.  The messageLogLevel specifies the log level of the given log request and is compared to the globalLogLevel to determine if the requested log message is generated or not.  If the messageLogLevel is less than the globalLogLevel, the log message is not generated.  If, however, the messageLogLevel is greater than or equal to the globalLogLevel, then the log message is generated.
@@ -97,20 +117,17 @@ import * as logger from 'tango-es6-logger';
 5) For messages written to the console, text and background colors are provided for ease of viewing.
 
 
-## Examples
-```
-import logLevel from 'tango-es6-logger';
-import * as logger from 'tango-es6-logger';
+## Global Variables
+tango-es6-logger uses three global variables.  These variables are as follows:
 
-logger.setLogLevel(logLevel.TRACE);
-logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
-logIt(logLevel.WARN, 'This message will appear in the myLogFile.txt file.');
+1) global.__globalLogLevel - Used to persist the globalLogLevel setting.
+2) global.__logMode - Used to persist the logMode setting.
+3) global.__fileAndPath - Used to persist the file and path location of a log file, if the logMode is set to FILE.
 
-logger.setLogLevel(logLevel.ERROR);
-logger.setLogMode(logger.logMode.CONSOLE);
-logIt(logLevel.TRACE, 'This message will not appear because the messageLogLevel is less than the globalLogLevel.');
+PLEASE REFRAIN FROM USING THESE VARILABLE NAMES.
 
-logger.setLogLevel(logLevel.DEBUG);
-logger.setLogMode(logger.logMode.CONSOLE);
-logIt(logLevel.DEBUG, 'This message will display in the console because the messageLogLevel is greater than or equal to the globalLogLevel');
-```
+The value of these global variables is set when using the public logger methods It is important to note - your code should not use these variable names.  Doing so could cause unexpected behavior in the logger module.  Validity checking is implemented to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to accidently change the value of one of these global variables to a valid value, which could cause the logger to behave in an unexpected manner.
+
+Further, please note, consideration was taken when determining if the logger encountered an unexpected value in one of the global values.  The choice was to change the unexpected value to a default value or throw an error.  I ultimately decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware the global variable value has changed somewhere is your code.
+
+Again, please refrain from using these global variale names in your code.
