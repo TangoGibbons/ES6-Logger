@@ -95,13 +95,13 @@ test('should show on the console', () => {
 });
 
 
-// Changing the global.__configuredLogLevel outside the logger module
+// Changing the global.__globalLogLevel outside the logger module
 test('should show on the console', () => {
     logger.setLogMode(logger.logMode.CONSOLE);
 
     // Test all logLevels on a logLevel setting of trace
     logger.setGlobalLogLevel(logLevel.TRACE);
-    global.__configuredLogLevel = 4;
+    global.__globalLogLevel = 4;
     expect(logger.logIt(logLevel.TRACE, 'trace on trace')).toBe(false);
     expect(logger.logIt(logLevel.DEBUG, 'debug on trace')).toBe(false);
     expect(logger.logIt(logLevel.INFO, 'info on trace')).toBe(false);
@@ -166,19 +166,19 @@ test('change the global.__fileAndPath to a valid value', () => {
 });
 
 
-// Test errors generated if the global.__configuredLogLevel is changed external to the logger module
+// Test errors generated if the global.__globalLogLevel is changed external to the logger module
 test('external change to logLevel, should show on console with warning', () => {
     expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
     expect(logger.setGlobalLogLevel(logLevel.FATAL)).toBe(logLevel.FATAL);
 
-    global.__configuredLogLevel = 10;
+    global.__globalLogLevel = 10;
     expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__configuredLogLevel is not between 0 and 5 inclusively');
+        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__globalLogLevel is not between 0 and 5 inclusively');
     }).toThrow();
 
-    global.__configuredLogLevel = "failure";
+    global.__globalLogLevel = "failure";
     expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__configuredLogLevel is not of type number');
+        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__globalLogLevel is not of type number');
     }).toThrow();
 });
 
