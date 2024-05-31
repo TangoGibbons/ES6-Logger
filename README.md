@@ -8,15 +8,15 @@ tango-es6-logger is a simple logger for NodeJS projects.  tango-es6-logger is bu
 import logLevel from 'tango-es6-logger';
 import * as logger from 'tango-es6-logger';
 
-logger.setLogLevel(logLevel.TRACE);
+logger.setGlobalLogLevel(logLevel.TRACE);
 logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
 logIt(logLevel.WARN, 'This message will appear in the myLogFile.txt file.');
 
-logger.setLogLevel(logLevel.ERROR);
+logger.setGlobalLogLevel(logLevel.ERROR);
 logger.setLogMode(logger.logMode.CONSOLE);
 logIt(logLevel.TRACE, 'This message will not appear because the messageLogLevel is less than the globalLogLevel.');
 
-logger.setLogLevel(logLevel.DEBUG);
+logger.setGlobalLogLevel(logLevel.DEBUG);
 logger.setLogMode(logger.logMode.CONSOLE);
 logIt(logLevel.DEBUG, 'This message will display in the console because the messageLogLevel is greater than or equal to the globalLogLevel');
 ```
