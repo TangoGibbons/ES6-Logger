@@ -8,14 +8,17 @@ tango-es6-logger is a simple logger for NodeJS projects.  tango-es6-logger is bu
 import logLevel from 'tango-es6-logger';
 import * as logger from 'tango-es6-logger';
 
+Example 1
 logger.setGlobalLogLevel(logLevel.TRACE);
 logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
 logIt(logLevel.WARN, 'This message will appear in the myLogFile.txt file.');
 
+Example 2
 logger.setGlobalLogLevel(logLevel.ERROR);
 logger.setLogMode(logger.logMode.CONSOLE);
 logIt(logLevel.TRACE, 'This message will not appear because the messageLogLevel is less than the globalLogLevel.');
 
+Example 3
 logger.setGlobalLogLevel(logLevel.DEBUG);
 logger.setLogMode(logger.logMode.CONSOLE);
 logIt(logLevel.DEBUG, 'This message will display in the console because the messageLogLevel is greater than or equal to the globalLogLevel');
@@ -27,7 +30,7 @@ logIt(logLevel.DEBUG, 'This message will display in the console because the mess
 
 TRACE < DEBUG < INFO < WARN < ERROR < FATAL
 
-A log message will be generated if the globalLogLevel is greater than or equal to the messageLogLevel for a given request.  For example, if the globalLogLevel is set to WARN, log messages with a messageLogLevel of TRACE, DEBUG, or INFO will not be generated but log messages with a messageLogLevel of WARN, ERROR, or FATAL will be generated.
+A log message will be generated if the globalLogLevel is less than or equal to the messageLogLevel for a given request.  For example, if the globalLogLevel is set to WARN, log messages with a messageLogLevel of TRACE, DEBUG, or INFO will not be generated but log messages with a messageLogLevel of WARN, ERROR, or FATAL will be generated.
 
 2) Set the logMode to output the log message to either the console log or a file.  If the logMode is set to FILE, then the file path and name must be specified.
 
@@ -56,7 +59,7 @@ Now, let's visit the functions.
 - logMode is of type logMode (the enum mentioned above)
 - filePathAndName is of type string and represents the file path and name of the log file in which log messages will be generated.
 
-You call the setLogMode function to set the logMode.  The logMode is used for each log message, to determine where to generate the log message: CONSOLE for the console window and FILE for a log file.  The logMode enum is available to be used for setting the value of the first parameter.  When using a logMode of FILE, the second parameter is required, the file path and name into which the log messages will be generated.  Please note, the second parameter is not required if the specified logMode is CONSOLE.
+You call the setLogMode function to set the logMode.  The logMode is used for each log message, to determine where to generate the log message: CONSOLE for the console window and FILE for a log file.  The logMode enum is available to be used for setting the value of the first parameter.  When using a logMode of FILE, the second parameter is required: the file path and name into which the log messages will be generated.  Please note, the second parameter is not required if the specified logMode is CONSOLE.
 
 You can change the logMode as many times as you wish by calling the setLogMode more than once.  All log message requests will use the most recent set logMode.
 
@@ -106,9 +109,9 @@ Of course, you can import the logLevel as you wish, and, therefore, refer to it 
 ```
 import * as logger from 'tango-es6-logger';
 
-- To set the globalLogLevel to TRACE: logger.setLogLevel(logLevel.TRACE);
+- To set the globalLogLevel to TRACE: logger.setGlobalLogLevel(logLevel.TRACE);
 - To set the logMode to CONSOLE: logger.setLogMode(logger.logMode.CONSOLE);
-- To set the logMode to FILE: logger.setLogMode(logger.logMode.FILE, 'test.txt');
+- To set the logMode to FILE: logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt');
 - To write a log message with a messageLogLevel of DEBUG: logger.logIt(logLevel.DEBUG, 'log message');
 ```
 
@@ -126,8 +129,8 @@ tango-es6-logger uses three global variables.  These variables are as follows:
 
 PLEASE REFRAIN FROM USING THESE VARIABLE NAMES.
 
-The values of these global variables are set when using the logger's public methods as described above.  Your code should not use these variable names nor directly change the values of these variables; doing so could cause unexpected behavior in the logger module.  Validity checking is implemented on a usage-by-usage basis to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to inadvertently change the value of one of these global variables to a valid value, which could cause the logger to behave in an unexpected manner.
+The values of these global variables are set when using the logger's public methods as described above.  Your code should not use these variable names nor directly change the values of these variables; doing so could cause unexpected behavior in the logger module.  Validity checking is implemented on a usage-by-usage basis to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to inadvertently change the value of one of these global variables to a valid value, which could cause the logger module to behave in an unexpected manner.
 
-Further, please note, consideration was taken when determining how the logger should behave when encountering an unexpected value in one of the global values.  The choice is to change the unexpected value to a default value or throw an error.  Ultimately, it was decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware a global variable value has changed somewhere is your code.
+Further, please note, consideration was taken when determining how the logger should behave when encountering an unexpected value in one of the global values.  The choice is to change the unexpected value to a default value or throw an error.  Ultimately, it was decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware a global variable value has changed outside the provided public methods.
 
-Again, please refrain from using these global variale names in your code.
+Again, please refrain from using these global variable names in your code.
