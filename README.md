@@ -224,12 +224,3 @@ They are:
 
 This design choice favors **explicit failure** over silent misbehavior.
 
----
-
-## 🎯 Design Philosophy
-
-- Simple API
-- Explicit behavior
-- No magic
-- No side effects
-- No dependencies
