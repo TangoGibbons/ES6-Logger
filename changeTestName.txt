@@ -1,4 +1,0 @@
-
-Mon Jan 12 2026 16:58:54 Trace - test row 1
-Mon Jan 12 2026 16:58:54 Trace - test row 2
-Mon Jan 12 2026 16:58:54 Trace - test row 3

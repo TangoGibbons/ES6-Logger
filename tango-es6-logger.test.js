@@ -13,12 +13,17 @@
 import fs from 'fs';
 import logLevel from './tango-es6-logger.js';
 import * as logger from './tango-es6-logger.js';
+import { jest } from '@jest/globals';
 
+beforeEach(() => {
+    logger.setLogMode(logger.logMode.CONSOLE);
+    logger.setGlobalLogLevel(logLevel.TRACE);
+});
 
 // Test setting the logMode
 test('set the logMode', () => {
     expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
-    expect(logger.setLogMode(logger.logMode.FILE)).toBe(logger.logMode.FILE);
+    expect(logger.setLogMode(logger.logMode.FILE, 'test.txt')).toBe(logger.logMode.FILE);
     expect(logger.setLogMode('UNSUPPORTED')).toBe(logger.logMode.CONSOLE);
 });
 
@@ -95,105 +100,55 @@ test('should show on the console', () => {
 });
 
 
-// Changing the global.__globalLogLevel outside the logger module
-test('should show on the console', () => {
-    logger.setLogMode(logger.logMode.CONSOLE);
-
-    // Test all logLevels on a logLevel setting of trace
-    logger.setGlobalLogLevel(logLevel.TRACE);
-    global.__globalLogLevel = 4;
-    expect(logger.logIt(logLevel.TRACE, 'trace on trace')).toBe(false);
-    expect(logger.logIt(logLevel.DEBUG, 'debug on trace')).toBe(false);
-    expect(logger.logIt(logLevel.INFO, 'info on trace')).toBe(false);
-    expect(logger.logIt(logLevel.WARN, 'warn on trace')).toBe(false);
-    expect(logger.logIt(logLevel.ERROR, 'error on trace')).toBe(true);
-    expect(logger.logIt(logLevel.FATAL, 'fatal on trace')).toBe(true);
-});
-
-
-// Changing the global.__logMode outside the logger module
-test('should show on the console with warning', () => {
-    logger.setLogMode(logger.logMode.FILE, 'test.txt');
-
-    logger.setGlobalLogLevel(logLevel.TRACE);
-    global.__logMode = 'UNSUPPORTED';
-    expect(logger.logIt(logLevel.TRACE, 'testing unsupported logMode set outside the logger module')).toBe(true);
-});
-
-
 // Test logging to file
 test('writing to log file', () => {
-    let fd = fs.readFileSync('test.txt', { encoding: 'utf8', flag: 'w+' });
-    fd.close;
-
-    logger.setGlobalLogLevel(logLevel.TRACE);
-    logger.setLogMode(logger.logMode.FILE, 'test.txt');
-    logger.logIt(logLevel.TRACE, 'test row 1');
-    logger.logIt(logLevel.TRACE, 'test row 2');
-    logger.logIt(logLevel.TRACE, 'test row 3');
-
-    let text = fs.readFileSync('test.txt').toString();
-    let lines = text.split('\n');
-    let new_lines = lines.length - 1;
-    expect(3).toBe(new_lines);
-});
-
-
-// Test changing the global.__fileAndPath outside the logger module to a valid value
-test('change the global.__fileAndPath to a valid value', () => {
-    let fd1 = fs.readFileSync('test.txt', { encoding: 'utf8', flag: 'w+' });
-    fd1.close;
-    let fd2 = fs.readFileSync('changeTestName.txt', { encoding: 'utf8', flag: 'w+' });
-    fd2.close;
+    fs.writeFileSync('test.txt', '');
 
     logger.setGlobalLogLevel(logLevel.TRACE);
     logger.setLogMode(logger.logMode.FILE, 'test.txt');
 
-    global.__fileAndPath = 'changeTestName.txt';
     logger.logIt(logLevel.TRACE, 'test row 1');
     logger.logIt(logLevel.TRACE, 'test row 2');
     logger.logIt(logLevel.TRACE, 'test row 3');
 
-    let text = fs.readFileSync('changeTestName.txt').toString();
-    let lines = text.split('\n');
-    let new_lines = lines.length - 1;
-    expect(3).toBe(new_lines);
+    const text = fs.readFileSync('test.txt', 'utf8');
+    const lines = text.trim().split('\n');
 
-    text = fs.readFileSync('test.txt').toString();
-    lines = text.split('\n');
-    new_lines = lines.length - 1;
-    expect(0).toBe(new_lines);
+    expect(lines.length).toBe(3);
 });
 
 
-// Test errors generated if the global.__globalLogLevel is changed external to the logger module
-test('external change to logLevel, should show on console with warning', () => {
-    expect(logger.setLogMode(logger.logMode.CONSOLE)).toBe(logger.logMode.CONSOLE);
-    expect(logger.setGlobalLogLevel(logLevel.FATAL)).toBe(logLevel.FATAL);
+// verify log levels are routed to the correct standard output
+test('warn and error write to stderr', () => {
+    const stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => {});
+    const stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
 
-    global.__globalLogLevel = 10;
-    expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__globalLogLevel is not between 0 and 5 inclusively');
-    }).toThrow();
+    logger.setLogMode(logger.logMode.CONSOLE);
+    logger.setGlobalLogLevel(logLevel.TRACE);
 
-    global.__globalLogLevel = "failure";
-    expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because global.__globalLogLevel is not of type number');
-    }).toThrow();
+    logger.logIt(logLevel.WARN, 'warn message');
+    logger.logIt(logLevel.ERROR, 'error message');
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expect(stdoutSpy).not.toHaveBeenCalled();
+
+    stderrSpy.mockRestore();
+    stdoutSpy.mockRestore();
 });
 
 
-// Test error generated if bad file name is used
-test('external change to logLevel, should show on console with warning', () => {
-    expect(logger.setLogMode(logger.logMode.FILE, null)).toBe(logger.logMode.FILE);
+// test to see error handling when a logfile name is missing
+test('file mode without path throws', () => {
+    expect(() => {
+        logger.setLogMode(logger.logMode.FILE);
+    }).toThrow('FILE logMode requires a file path');
+});
 
-    expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because of a bad file name');
-    }).toThrow();
 
-    expect(logger.setLogMode(logger.logMode.FILE, 'test.txt')).toBe(logger.logMode.FILE);
-    global.__fileAndPath = null;
-    expect(()=>{
-        logger.logIt(logLevel.FATAL, 'An error should be thrown because the global.__fileAndPath value was changed to a bad file name');
-    }).toThrow();
+// test to determine if the message is logged based upon the global log level and message log level
+test('logIt returns false when suppressed', () => {
+    logger.setGlobalLogLevel(logLevel.ERROR);
+
+    expect(logger.logIt(logLevel.INFO, 'info')).toBe(false);
+    expect(logger.logIt(logLevel.ERROR, 'error')).toBe(true);
 });
