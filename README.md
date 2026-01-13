@@ -143,6 +143,7 @@ logger.setLogMode(logger.logMode.FILE, 'logs/app.log');
 
 - Sets where log messages are written
 - When using `FILE`, a file path **must** be provided
+- Invalid configurations fail immediately
 - Can be called multiple times — the most recent call wins
 
 ---
@@ -155,7 +156,7 @@ logger.setGlobalLogLevel(logLevel.WARN);
 
 - Defines the minimum log level that will be generated
 - Can be changed at runtime
-- Applies process-wide within the Node.js runtime
+- Returns the **effective** log level that was set
 
 ---
 
@@ -168,6 +169,7 @@ logger.logIt(logLevel.INFO, 'Processing request');
 - Requests generation of a log entry
 - The message is generated only if  
   `messageLogLevel >= globalLogLevel`
+- Returns `true` if the message was generated, otherwise `false`
 
 ---
 
@@ -206,7 +208,31 @@ logger.logIt(logLevel.DEBUG, 'Debug message');
 
 - Each log entry is prefixed with the **current date and time** (ISO-8601)
 - Console output includes **foreground and background colors** for clarity
-- Warning, error, and fatal messages are written to **stderr**
+
+### Standard Output vs Standard Error
+
+When `logMode` is set to `CONSOLE`, log messages are routed to either
+**standard output (`stdout`)** or **standard error (`stderr`)**
+based on the log level.
+
+The mapping is intentional and consistent:
+
+| Log Level | Output Stream |
+|----------|---------------|
+| TRACE    | stdout        |
+| DEBUG    | stdout        |
+| INFO     | stdout        |
+| WARN     | stderr        |
+| ERROR    | stderr        |
+| FATAL    | stderr        |
+
+This behavior aligns with common operational practices in Unix-like
+environments, containers, CI pipelines, and process supervisors.
+
+It allows informational output to be consumed normally while enabling
+warnings and errors to be captured, redirected, or filtered independently.
+
+This routing applies only when `logMode` is set to `CONSOLE`.
 
 ---
 

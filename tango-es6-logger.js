@@ -75,8 +75,12 @@ export function setLogMode(__changeLogMode, __changeFileWithPath = null) {
     switch (__changeLogMode) {
         case logMode.CONSOLE:
             currentLogMode = logMode.CONSOLE;
+            fileAndPath = null;
             break;
         case logMode.FILE:
+            if (!__changeFileWithPath) {
+                throw new Error('FILE logMode requires a file path');
+            }
             currentLogMode = logMode.FILE;
             fileAndPath = __changeFileWithPath;
             break;
@@ -93,6 +97,7 @@ export function setLogMode(__changeLogMode, __changeFileWithPath = null) {
 // The global.__globalLogLevel value is changed so that the changed value is effective for all subsequent calls.
 // PUBLIC METHOD
 export function setGlobalLogLevel(__changeLogLevel) {
+    let returnLevelVariable = __changeLogLevel;
     switch (__changeLogLevel) {
         case logLevel.TRACE:
             globalLogLevel = 0;
@@ -114,16 +119,18 @@ export function setGlobalLogLevel(__changeLogLevel) {
             break;
         default: // default to trace
             globalLogLevel = 0;
+            returnLevelVariable = logLevel.TRACE;
             logIt(logLevel.WARN, 'Trying to set logLevel to invalid value - defaulting to TRACE.');
             break;
     }
-    return __changeLogLevel; // Returning mainly for testing purposes
+    return returnLevelVariable; // Returning mainly for testing purposes
 }
 
 
 // The logging function.
 // PUBLIC METHOD
 export function logIt(__logLevel, logMessage) {
+    
     let logged = false;
     switch (__logLevel) {
         case logLevel.TRACE:
