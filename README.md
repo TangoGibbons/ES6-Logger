@@ -1,136 +1,226 @@
 # tango-es6-logger
 
-tango-es6-logger is a simple logger for NodeJS projects.  tango-es6-logger is built using the es6 specification, meaning it uses the es6 modules specification for importing into NodeJS modules.
+A lightweight, dependency-free logger for **Node.js** projects built using **ES6 modules**.
 
+`tango-es6-logger` provides a minimal, explicit logging API with configurable log levels and output modes (console or file). It is intentionally simple, predictable, and easy to reason about.
 
-## Examples
-```
-import logLevel from 'tango-es6-logger';
-import * as logger from 'tango-es6-logger';
+---
 
-Example 1
-logger.setGlobalLogLevel(logLevel.TRACE);
-logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
-logIt(logLevel.WARN, 'This message will appear in the myLogFile.txt file.');
+## ✨ Features
 
-Example 2
-logger.setGlobalLogLevel(logLevel.ERROR);
-logger.setLogMode(logger.logMode.CONSOLE);
-logIt(logLevel.TRACE, 'This message will not appear because the messageLogLevel is less than the globalLogLevel.');
+- **Six log levels**  
+  `TRACE < DEBUG < INFO < WARN < ERROR < FATAL`
 
-Example 3
-logger.setGlobalLogLevel(logLevel.DEBUG);
-logger.setLogMode(logger.logMode.CONSOLE);
-logIt(logLevel.DEBUG, 'This message will display in the console because the messageLogLevel is greater than or equal to the globalLogLevel');
-```
+- **Global log level control**  
+  Only messages at or above the configured level are generated.
 
+- **Multiple output modes**
+  - Console
+  - File
 
-## tango-es6-logger Features
-1) Set the globalLogLevel to determine what log messages are generated.  Supported logging levels are:
+- **ES6 module support**
+  - Clean `import` syntax
+  - No CommonJS boilerplate
 
-TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+- **Zero dependencies**
 
-A log message will be generated if the globalLogLevel is less than or equal to the messageLogLevel for a given request.  For example, if the globalLogLevel is set to WARN, log messages with a messageLogLevel of TRACE, DEBUG, or INFO will not be generated but log messages with a messageLogLevel of WARN, ERROR, or FATAL will be generated.
+- **Colorized console output** for improved readability
 
-2) Set the logMode to output the log message to either the console log or a file.  If the logMode is set to FILE, then the file path and name must be specified.
+---
 
-3) Specify for each log request the log level, or messageLogLevel, for that request.  The log message will be generated as long as the messageLogLevel for a given request is greater than or equal to the globalLogLevel you set, as mentioned in bullet 1 above.
+## 📦 Installation
 
-
-## Install
-```shell
+```bash
 npm install tango-es6-logger
 ```
 
+---
 
-## Usage
-tango-es6-logger has three (3) exported functions and two (2) exported enums.  These functions and enums represent the public facing interface to the tango-es6-logger and have been designed to be very simple to use.  
+## 🚀 Quick Start
 
-We will explain the enums, first.
-
-1) logMode - The values for logMode are CONSOLE and FILE.  This enum is used when setting the manner in which you want the log messages to be generated.  When you set the logMode to CONSOLE, the log messages will be displayed in the console window.  If you specify the logMode to be FILE, the log messages will be generated in a file.  When specifying a logModel of FILE, you must also provide the path and filename of the file in which you want the log messages to be generated, see the description of the setLogMode function below.
-
-2) logLevel - The values for logLevel are TRACE, DEBUG, INFO, WARN, ERROR, and FATAL.  This enum is used in two ways: setting the globalLogLevel that is used when determining if a specific log message should be generated and to specify the messageLogLevel for each log message request.
-
-Now, let's visit the functions.
-
-1) setLogMode(logMode[, filePathAndName])
-
-- logMode is of type logMode (the enum mentioned above)
-- filePathAndName is of type string and represents the file path and name of the log file in which log messages will be generated.
-
-You call the setLogMode function to set the logMode.  The logMode is used for each log message, to determine where to generate the log message: CONSOLE for the console window and FILE for a log file.  The logMode enum is available to be used for setting the value of the first parameter.  When using a logMode of FILE, the second parameter is required: the file path and name into which the log messages will be generated.  Please note, the second parameter is not required if the specified logMode is CONSOLE.
-
-You can change the logMode as many times as you wish by calling the setLogMode more than once.  All log message requests will use the most recent set logMode.
-
-2) setGlobalLogLevel(logLevel)
-
-- logLevel is of type logLevel (the enum mentioned above)
-
-This method sets the globalLogLevel.  You can set the globalLogLevel, then change it later, but all requests to generate a log message will use the most recently set globalLogLevel.  A request to generate a specific log message must include a messageLogLevel.  The messageLogLevel is compared to the globalLogLevel to determine if a log message will be generated.
-
-Other logger solutions use the term "filter" when referring to the realtionship between the messageLogLevel and globalLogLevel.  For tango-es6-logger, filter is not the right verb because a log entry is not generated if the messageLogLevel for a given request is less than the globalLogLevel you set.  The verb 'filter' implies all log messages are generated and possibly not shown.  However, tango-es6-logger simply does not generated a log message if the messageLogLevel is less than the globalLogLevel.
-
-3) logIt(messageLogLevel, logMessage)
-
-- messageLogLevel is of type logLevel (the enum mentioned above)
-- logMessage is of type string
-
-This method is used to request a log message be generated.  The messageLogLevel specifies the log level of the given log request and is compared to the globalLogLevel to determine if the requested log message is generated or not.  If the messageLogLevel is less than the globalLogLevel, the log message is not generated.  If, however, the messageLogLevel is greater than or equal to the globalLogLevel, then the log message is generated.
-
-For example, if the globalLogLevel is set to WARN, then log requests with messageLogLevels of TRACE, DEBUG, or INFO are not generated and log requests with messageLogLevels of WARN, ERROR, or FATAL are geneated.  However, if the globalLogLevel is set to TRACE, then all log requests are generated because TRACE is the lowest possible logLevel.
-
-
-## Additional Detail
-1) Typically, the logMode and globalLogLevel are set before calling the logIt method.  This way, the logIt method will generate a log message exactly in accordance to your wishes.  However, the logMode does default to logMode.CONSOLE and the globalLogLevel does default to logLevel.TRACE.
-
-2) Because the logLevel enum will be used quite often, this enum is the default export.  So, you can import the logLevel as following:
-
-```
+```js
 import logLevel from 'tango-es6-logger';
-```
-
-Then use it in your code as follows:
-
-```
-logLevel.WARN
-```
-
-as opposed to:
-
-```
-logger.logLevel.WARN
-```
-
-Of course, you can import the logLevel as you wish, and, therefore, refer to it in your code as you wish.
-
-3) The other enum and all methods are individually exported, requiring the following means of importing and using them:
-
-```
 import * as logger from 'tango-es6-logger';
 
-- To set the globalLogLevel to TRACE: logger.setGlobalLogLevel(logLevel.TRACE);
-- To set the logMode to CONSOLE: logger.setLogMode(logger.logMode.CONSOLE);
-- To set the logMode to FILE: logger.setGlobalLogLevel(logger.logMode.FILE, 'test.txt');
-- To write a log message with a messageLogLevel of DEBUG: logger.logIt(logLevel.DEBUG, 'log message');
+logger.setGlobalLogLevel(logLevel.DEBUG);
+logger.setLogMode(logger.logMode.CONSOLE);
+
+logger.logIt(logLevel.INFO, 'Application started');
 ```
 
-4) Each log message is proceeded with the current date/time.
+---
 
-5) For messages written to the console, text and background colors are provided for ease of viewing.
+## 🧪 Examples
 
+### Example 1 — Log to a File
 
-## Global Variables
-tango-es6-logger uses three global variables.  These variables are as follows:
+```js
+logger.setGlobalLogLevel(logLevel.TRACE);
+logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
 
-1) global.__globalLogLevel - Used to persist the globalLogLevel setting.
-2) global.__logMode - Used to persist the logMode setting.
-3) global.__fileAndPath - Used to persist the file and path location of a log file, if the logMode is set to FILE.
+logger.logIt(logLevel.WARN, 'This message will be written to myLogFile.txt');
+```
 
-PLEASE REFRAIN FROM USING THESE VARIABLE NAMES.
+### Example 2 — Log Suppression via Global Log Level
 
-The values of these global variables are set when using the logger's public methods as described above.  Your code should not use these variable names nor directly change the values of these variables; doing so could cause unexpected behavior in the logger module.  Validity checking is implemented on a usage-by-usage basis to ensure the global varilables contain expected values and an error is thrown if a value is unexpected.  However, it is still possible to inadvertently change the value of one of these global variables to a valid value, which could cause the logger module to behave in an unexpected manner.
+```js
+logger.setGlobalLogLevel(logLevel.ERROR);
+logger.setLogMode(logger.logMode.CONSOLE);
 
-Further, please note, consideration was taken when determining how the logger should behave when encountering an unexpected value in one of the global values.  The choice is to change the unexpected value to a default value or throw an error.  Ultimately, it was decided to thrown an error because changing the value to a default value may cause unexpected behavior in your code.  It seemed better to throw an error so that you are aware a global variable value has changed outside the provided public methods.
+logger.logIt(
+  logLevel.TRACE,
+  'This message will not be generated because TRACE < ERROR'
+);
+```
 
-Again, please refrain from using these global variable names in your code.
+### Example 3 — Console Logging
+
+```js
+logger.setGlobalLogLevel(logLevel.DEBUG);
+logger.setLogMode(logger.logMode.CONSOLE);
+
+logger.logIt(
+  logLevel.DEBUG,
+  'This message will appear because DEBUG >= DEBUG'
+);
+```
+
+---
+
+## 🧠 Logging Model
+
+A log message is generated **only if**:
+
+```
+messageLogLevel >= globalLogLevel
+```
+
+This is **not filtering**.
+
+Messages below the global log level are **never created**, not merely hidden.
+
+---
+
+## 📚 Public API
+
+`tango-es6-logger` exposes:
+
+- **2 enums**
+- **3 functions**
+
+### Enums
+
+#### `logLevel` *(default export)*
+
+```js
+TRACE | DEBUG | INFO | WARN | ERROR | FATAL
+```
+
+Used to:
+- Set the global log level
+- Specify the level of individual log messages
+
+---
+
+#### `logMode`
+
+```js
+CONSOLE | FILE
+```
+
+Used to define where log messages are written.
+
+---
+
+### Functions
+
+#### `setLogMode(logMode[, filePathAndName])`
+
+```js
+logger.setLogMode(logger.logMode.CONSOLE);
+logger.setLogMode(logger.logMode.FILE, 'logs/app.log');
+```
+
+- Sets where log messages are written
+- When using `FILE`, a file path **must** be provided
+- Can be called multiple times — the most recent call wins
+
+---
+
+#### `setGlobalLogLevel(logLevel)`
+
+```js
+logger.setGlobalLogLevel(logLevel.WARN);
+```
+
+- Defines the minimum log level that will be generated
+- Can be changed at runtime
+
+---
+
+#### `logIt(messageLogLevel, message)`
+
+```js
+logger.logIt(logLevel.INFO, 'Processing request');
+```
+
+- Requests generation of a log entry
+- The message is generated only if `messageLogLevel >= globalLogLevel`
+
+---
+
+## 📌 Defaults
+
+If not explicitly set:
+
+- `logMode` defaults to `CONSOLE`
+- `globalLogLevel` defaults to `TRACE`
+
+---
+
+## 📥 Importing Notes
+
+Because `logLevel` is used frequently, it is exported as the **default export**:
+
+```js
+import logLevel from 'tango-es6-logger';
+
+logLevel.WARN;
+```
+
+All other exports are named:
+
+```js
+import * as logger from 'tango-es6-logger';
+
+logger.setGlobalLogLevel(logLevel.TRACE);
+logger.setLogMode(logger.logMode.CONSOLE);
+logger.logIt(logLevel.DEBUG, 'Debug message');
+```
+
+---
+
+## 🕒 Log Output Format
+
+- Each log entry is prefixed with the **current date and time**
+- Console output includes **foreground and background colors** for clarity
+
+---
+
+## ⚠️ Global Variables (Internal)
+
+`tango-es6-logger` uses the following global variables internally:
+
+- `global.__globalLogLevel`
+- `global.__logMode`
+- `global.__fileAndPath`
+
+**Do not use or modify these variables directly.**
+
+They are:
+- Managed exclusively via the public API
+- Validated on access
+- Designed to throw errors if corrupted
+
+This design choice favors **explicit failure** over silent misbehavior.
+
