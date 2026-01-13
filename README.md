@@ -11,7 +11,7 @@ A lightweight, dependency-free logger for **Node.js** projects built using **ES6
 - **Six log levels**  
   `TRACE < DEBUG < INFO < WARN < ERROR < FATAL`
 
-- **Global log level control**  
+- **Process-wide log level control**  
   Only messages at or above the configured level are generated.
 
 - **Multiple output modes**
@@ -22,7 +22,7 @@ A lightweight, dependency-free logger for **Node.js** projects built using **ES6
   - Clean `import` syntax
   - No CommonJS boilerplate
 
-- **Zero dependencies**
+- **Zero runtime dependencies**
 
 - **Colorized console output** for improved readability
 
@@ -61,7 +61,7 @@ logger.setLogMode(logger.logMode.FILE, 'myLogFile.txt');
 logger.logIt(logLevel.WARN, 'This message will be written to myLogFile.txt');
 ```
 
-### Example 2 — Log Suppression via Global Log Level
+### Example 2 — Log Suppression via Log Level
 
 ```js
 logger.setGlobalLogLevel(logLevel.ERROR);
@@ -97,7 +97,7 @@ messageLogLevel >= globalLogLevel
 
 This is **not filtering**.
 
-Messages below the global log level are **never created**, not merely hidden.
+Messages below the configured log level are **never created**, not merely hidden.
 
 ---
 
@@ -117,7 +117,7 @@ TRACE | DEBUG | INFO | WARN | ERROR | FATAL
 ```
 
 Used to:
-- Set the global log level
+- Set the configured log level
 - Specify the level of individual log messages
 
 ---
@@ -155,6 +155,7 @@ logger.setGlobalLogLevel(logLevel.WARN);
 
 - Defines the minimum log level that will be generated
 - Can be changed at runtime
+- Applies process-wide within the Node.js runtime
 
 ---
 
@@ -165,7 +166,8 @@ logger.logIt(logLevel.INFO, 'Processing request');
 ```
 
 - Requests generation of a log entry
-- The message is generated only if `messageLogLevel >= globalLogLevel`
+- The message is generated only if  
+  `messageLogLevel >= globalLogLevel`
 
 ---
 
@@ -202,25 +204,18 @@ logger.logIt(logLevel.DEBUG, 'Debug message');
 
 ## 🕒 Log Output Format
 
-- Each log entry is prefixed with the **current date and time**
+- Each log entry is prefixed with the **current date and time** (ISO-8601)
 - Console output includes **foreground and background colors** for clarity
+- Warning, error, and fatal messages are written to **stderr**
 
 ---
 
-## ⚠️ Global Variables (Internal)
+## 🎯 Design Philosophy
 
-`tango-es6-logger` uses the following global variables internally:
+`tango-es6-logger` is intentionally minimal.
 
-- `global.__globalLogLevel`
-- `global.__logMode`
-- `global.__fileAndPath`
-
-**Do not use or modify these variables directly.**
-
-They are:
-- Managed exclusively via the public API
-- Validated on access
-- Designed to throw errors if corrupted
-
-This design choice favors **explicit failure** over silent misbehavior.
-
+- Explicit configuration over implicit behavior
+- Log messages are generated, not filtered
+- Predictable, process-wide state
+- No global namespace pollution
+- No unnecessary abstractions
