@@ -15,10 +15,12 @@ import logLevel from './tango-es6-logger.js';
 import * as logger from './tango-es6-logger.js';
 import { jest } from '@jest/globals';
 
+
 beforeEach(() => {
     logger.setLogMode(logger.logMode.CONSOLE);
     logger.setGlobalLogLevel(logLevel.TRACE);
 });
+
 
 // Test setting the logMode
 test('set the logMode', () => {
@@ -101,7 +103,7 @@ test('should show on the console', () => {
 
 
 // Test logging to file
-test('writing to log file', () => {
+test('writing to log file', async () => {
     fs.writeFileSync('test.txt', '');
 
     logger.setGlobalLogLevel(logLevel.TRACE);
@@ -111,6 +113,8 @@ test('writing to log file', () => {
     logger.logIt(logLevel.TRACE, 'test row 2');
     logger.logIt(logLevel.TRACE, 'test row 3');
 
+    await new Promise(resolve => setTimeout(resolve, 10));
+
     const text = fs.readFileSync('test.txt', 'utf8');
     const lines = text.trim().split('\n');
 
@@ -119,7 +123,7 @@ test('writing to log file', () => {
 
 
 // verify log levels are routed to the correct standard output
-test('warn and error write to stderr', () => {
+test('warn and error write to stderr', async () => {
     const stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => {});
     const stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
 
@@ -128,6 +132,8 @@ test('warn and error write to stderr', () => {
 
     logger.logIt(logLevel.WARN, 'warn message');
     logger.logIt(logLevel.ERROR, 'error message');
+
+    await new Promise(resolve => setImmediate(resolve));
 
     expect(stderrSpy).toHaveBeenCalled();
     expect(stdoutSpy).not.toHaveBeenCalled();

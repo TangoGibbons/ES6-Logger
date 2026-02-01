@@ -67,24 +67,35 @@ export const logMode = {
 let globalLogLevel = 0; // default to trace;
 let currentLogMode = logMode.CONSOLE; // default to console.
 let fileAndPath    = null; // If the default logMode is console, there is no need for a default log file.
+let fileStream     = null; // stream for non-blocking log output to a file;
 
 // A function for setting the logMode.  
 // The current logMode value is changed so that the change is effective
 // PUBLIC METHOD
-export function setLogMode(__changeLogMode, __changeFileWithPath = null) {
-    switch (__changeLogMode) {
+export function setLogMode(changeLogMode, changeFileWithPath = null) {
+    switch (changeLogMode) {
         case logMode.CONSOLE:
+            if (fileStream) {
+                fileStream.end();
+                fileStream = null;
+            }
             currentLogMode = logMode.CONSOLE;
             fileAndPath = null;
             break;
         case logMode.FILE:
-            if (!__changeFileWithPath) {
+            if (!changeFileWithPath) {
                 throw new Error('FILE logMode requires a file path');
             }
+
+            if (fileStream) {
+                fileStream.end();
+            }
+
+            fileAndPath = changeFileWithPath;
+            fileStream = fs.createWriteStream(fileAndPath, { flags: 'a' });
             currentLogMode = logMode.FILE;
-            fileAndPath = __changeFileWithPath;
             break;
-        default: // In case the wrong __logMode was passed into this function
+        default: // In case the wrong logMode was passed into this function
             currentLogMode = logMode.CONSOLE;
             logIt(logLevel.WARN, 'The logMode is not set to either CONSOLE or FILE - defaulting to CONSOLE.');
             break;                
@@ -129,10 +140,10 @@ export function setGlobalLogLevel(__changeLogLevel) {
 
 // The logging function.
 // PUBLIC METHOD
-export function logIt(__logLevel, logMessage) {
+export function logIt(messageLogLevel, logMessage) {
     
     let logged = false;
-    switch (__logLevel) {
+    switch (messageLogLevel) {
         case logLevel.TRACE:
             if (globalLogLevel <= 0) {
                 logTheMessage(trace('Trace - ' + logMessage), false);
@@ -183,9 +194,9 @@ export function logIt(__logLevel, logMessage) {
 
 // Abstracted method of performing the actual logging.
 // PRIVATE METHOD
-function logTheMessage(__message, isErrorStream) {
+function logTheMessage(message, isErrorStream) {
     const timestamp = new Date().toISOString();
-    const line = `${timestamp} ${__message}`;
+    const line = `${timestamp} ${message}`;
 
     switch (currentLogMode) {
         case logMode.CONSOLE:
@@ -193,11 +204,12 @@ function logTheMessage(__message, isErrorStream) {
             stream.write(line + '\n');
             break;
         case logMode.FILE:
-            fs.appendFileSync(fileAndPath, line + '\n');
+            if (fileStream) {
+                fileStream.write(line + '\n');
+            }
             break;    
         default:
-            // A default codepath if the global.__logMode value is not a supported value, 
-            // meaning it was changed outside this module (the user is warned).
+            // A default codepath if the currentLogMode does not match a supported mode (the user is warned).
             process.stderr.write(`${timestamp} WARN - Invalid logMode. Defaulting to CONSOLE.\n`);
             process.stdout.write(line + '\n');
             break;  
